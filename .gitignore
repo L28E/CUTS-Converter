@@ -1,0 +1,12 @@
+#Eclipse stuff
+.cproject
+.project
+.settings
+Debug
+
+#test stuff
+*.txt
+
+#output stuff
+*.wav
+
