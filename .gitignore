@@ -1,4 +1,5 @@
-#Eclipse stuff
+#editor stuff
+.vscode
 .cproject
 .project
 .settings
@@ -8,5 +9,6 @@ Debug
 *.txt
 
 #output stuff
+cuts
 *.wav
 

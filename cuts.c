@@ -10,7 +10,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "Filter.h"
+#include "filter.h"
 #include "wavmeta.h"
 
 const int sampleRate = 44100;
@@ -85,7 +85,8 @@ int modulate() {
 	FILE *outputFilePtr, *inputFilePtr;
 
 	// Open the file for reading and get its length in bytes
-	inputFilePtr = fopen("gabagool.txt", "rb");
+	// TODO: paramterize the input file
+	inputFilePtr = fopen("test.txt", "rb");
 	if (inputFilePtr == NULL)
 		return -1;
 	fseek(inputFilePtr, 0, SEEK_END);
@@ -156,8 +157,9 @@ int demodulate() {
 	 Demodulation will probably need to be de-coherent, because the casette will introduce a phase difference
 	 Maybe do two simoultaneous convolutions to filter each frequency,
 	 Then each goes into an envelope detector,
-	 Then both go into one comparator which decides what the bit is at Tb?
-	 I have to think about how Tb gets synchronized.
+	 Then both go into one comparator which decides what the bit is at Tb (the period for one bit).
+	 
+	 The challenge is deciding Tb and keeping it synchronized.
 	 */
 
 	lpf = malloc(sizeof(SampleFilter) + sizeof(impulseReponse));

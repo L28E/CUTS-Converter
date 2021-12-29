@@ -1,5 +1,10 @@
 #include <stdint.h>
 #include <string.h>
+/*******************************************************************
+*  wavmeta.h
+*
+* Header file with the structure of a WAV file's meta data.
+*******************************************************************/
 
 typedef struct {
 	// The RIFF chunk
