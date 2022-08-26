@@ -1,10 +1,3 @@
-/*
- * The original standard recorded data as "marks" (one) and "spaces" (zero).
- * A mark bit consisted of eight cycles at a frequency of 2400 Hz,
- * while a space bit consisted of four cycles at a frequency of 1200 Hz.
- * A word, usually one byte (8 bits) long, was recorded in little endian order,
- * i.e., least significant bit first.
- */
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>

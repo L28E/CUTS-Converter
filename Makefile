@@ -10,4 +10,4 @@ filter.o: filter.c filter.h
 	gcc -c filter.c 
 
 clean:
-	rm -f *.o cuts
+	rm -f *.o
