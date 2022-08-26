@@ -10,7 +10,7 @@ const int sampleRate = 44100;
 const int bitDepth = 16;
 const double volumeFactor = 0.1;
 const int numChannels = 1;
-SampleFilter *lpf;
+Filter *lpf;
 //Lets stick to the 300 Baud parameters for now
 const int markFrequency = 2400;
 const int spaceFrequency = 1200;
@@ -123,6 +123,22 @@ int modulate() {
 }
 
 int demodulate() {
+	
+	/*
+	 *
+	 *														 _
+	 *						.-------.		.-------.		/ \
+	 *				.------>/ MARK	/------>/  ENV	/-------/  \
+	 *				/		'-------'		'-------'		/   \
+	 *			 	/										/    \
+	 *	FSK input---/ 										/ DEC }----> Binary Out 
+	 *				/										/    /
+	 *				/		.-------.		.-------.		/   /
+	 *				'------>/ SPACE	/------>/  ENV	/-------/  /
+	 *						'-------'		'-------'		/_/
+	 *														
+	 */
+		
 	FILE *inputFilePtr;
 	uint32_t dataSize;
 	int16_t *buffer;
@@ -134,9 +150,11 @@ int demodulate() {
 		return -1;
 	}
 
-	// For now, I'll assume all the parameters of this .wav are the same as the one from wavWrite.c
-	// In that case I just need to get the datasize.
-	// Note that because this is 16 bit audio i.e. 2 bytes per sample, the number of samples is half the datasize.
+	/* For now, I'll assume all the parameters of this .wav are the same as the one we recorded to the casette, 
+	44100 Hz sample rate, 16 bit PCM
+	In that case I just need to get the datasize.
+	Note that because this is 16 bit audio i.e. 2 bytes per sample, the number of samples is half the datasize.
+	*/
 	fseek(inputFilePtr, 40, SEEK_SET);
 	fread(&dataSize, 4, 1, inputFilePtr);
 	printf("Data size in bytes: %d\n", dataSize);
@@ -146,29 +164,31 @@ int demodulate() {
 	fread(buffer, dataSize, 1, inputFilePtr);
 	fclose(inputFilePtr);
 
-	/* I don't really know what to do after this.
-	 Demodulation will probably need to be de-coherent, because the casette will introduce a phase difference
-	 Maybe do two simoultaneous convolutions to filter each frequency,
-	 Then each goes into an envelope detector,
-	 Then both go into one comparator which decides what the bit is at Tb (the period for one bit).
-	 
-	 The challenge is deciding Tb and keeping it synchronized.
-	 */
+	// Initialize the filters
+	lpf = malloc(sizeof(Filter) + sizeof(lowpassImpulse));
+	Filter_init(lpf);	 
 
-	lpf = malloc(sizeof(SampleFilter) + sizeof(impulseReponse));
-	SampleFilter_init(lpf);
-
+	// Open a temporary file for plotting
 	FILE *plotData = fopen("data.tmp", "w");
-
+	
+	// Step through the whole buffer and demodulate it
 	for (int i = 0; i < dataSize / 2; i++) {
-		SampleFilter_put(lpf, buffer[i]);
-		fprintf(plotData, "%d %d %f\n", i, buffer[i], SampleFilter_get(lpf));
+		// Update the filters
+		Filter_put(lpf, buffer[i]);		
+
+		// Update the envelope detectors
+
+		// Compare and decide
+		
+		// write to the temp file as we go 
+		fprintf(plotData, "%d %d %f\n", i, buffer[i], Filter_get(lpf));
 	}
+	
 	fclose(plotData);
 
-//	FILE *gnuPlotPipe = popen("gnuplot -persistent", "w");
-//	fprintf(gnuPlotPipe, "%s\n", "plot 'data.tmp' w l");
-//	fclose(gnuPlotPipe);
+	FILE *gnuPlotPipe = popen("gnuplot -persistent", "w");
+	fprintf(gnuPlotPipe, "%s\n", "plot 'data.tmp' w l title 'raw', '' using 1:3 w l title 'filtered'; pause mouse close");
+	fclose(gnuPlotPipe);
 
 	return 0;
 }

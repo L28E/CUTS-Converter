@@ -4,12 +4,12 @@
 
  FIR filter designed with
  http://t-filter.appspot.com
+
  */
 
-void SampleFilter_init(SampleFilter *f) {
-	// TODO: need to pick an impulse response based on some parameter
-	f->impulseResponse = (double*) &impulseReponse;
-	f->bufferSize = sizeof(impulseReponse) / sizeof(double);
+void Filter_init(Filter *f) {	
+	f->impulseResponse = (double*) &lowpassImpulse;
+	f->bufferSize = sizeof(lowpassImpulse) / sizeof(double);
 
 	int i;
 	for (i = 0; i < f->bufferSize; ++i)
@@ -17,13 +17,13 @@ void SampleFilter_init(SampleFilter *f) {
 	f->last_index = 0;
 }
 
-void SampleFilter_put(SampleFilter *f, double input) {
+void Filter_put(Filter *f, double input) {
 	f->history[f->last_index++] = input;
 	if (f->last_index == f->bufferSize)
 		f->last_index = 0;
 }
 
-double SampleFilter_get(SampleFilter *f) {
+double Filter_get(Filter *f) {
 	double acc = 0;
 	int index = f->last_index, i;
 	for (i = 0; i < f->bufferSize; ++i) {

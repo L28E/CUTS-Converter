@@ -8,7 +8,7 @@
 
  */
 
-static double impulseReponse[] = { -0.007841378739478247, -0.007888948215431272,
+static double lowpassImpulse[] = { -0.007841378739478247, -0.007888948215431272,
 		-0.009718678129505453, -0.009776234634601727, -0.00730891192450578,
 		-0.0019478042136496523, 0.005957227721681907, 0.015342233001297728,
 		0.0244505354193565, 0.031152478399515966, 0.03335884913930142,
@@ -32,10 +32,10 @@ typedef struct {
 	unsigned int bufferSize;
 	double *impulseResponse;
 	double history[];
-} SampleFilter;
+} Filter;
 
-void SampleFilter_init(SampleFilter *f);
-void SampleFilter_put(SampleFilter *f, double input);
-double SampleFilter_get(SampleFilter *f);
+void Filter_init(Filter *f);
+void Filter_put(Filter *f, double input);
+double Filter_get(Filter *f);
 
 #endif /* FILTER_H_ */

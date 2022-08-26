@@ -1,14 +1,17 @@
-#editor stuff
+# editor stuff
 .vscode
 .cproject
 .project
 .settings
 Debug
 
-#test stuff
+# test stuff
 *.txt
+*.tmp
 
-#output stuff
+# build stuff
+*.o
+
+# output stuff
 cuts
 *.wav
-
