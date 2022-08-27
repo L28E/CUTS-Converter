@@ -7,9 +7,9 @@
 
  */
 
-void Filter_init(Filter *f) {	
-	f->impulseResponse = (double*) &lowpassImpulse;
-	f->bufferSize = sizeof(lowpassImpulse) / sizeof(double);
+void Filter_init(Filter *f,double *impulseResponse, unsigned int bufferSize) {	
+	f->impulseResponse = impulseResponse;
+	f->bufferSize = bufferSize;
 
 	int i;
 	for (i = 0; i < f->bufferSize; ++i)
@@ -30,6 +30,5 @@ double Filter_get(Filter *f) {
 		index = index != 0 ? index - 1 : f->bufferSize - 1;
 		acc += f->history[index] * f->impulseResponse[i];
 	}
-	;
 	return acc;
 }
