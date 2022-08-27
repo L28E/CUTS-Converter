@@ -3,27 +3,21 @@
 /*
  * Function:  demodulate
  * --------------------
- * Demodulates a CUTS encoded WAV file
- *
+ * Demodulates a CUTS encoded WAV file. Here's the block diagram:
+ *                                                                    _____     
+ *                                                                   /     \
+ *                      .----------------.       .------------.      /      \
+ *              .------>/  Mark Matched  /------>/  Envelope  /----->/       \
+ *              /       /     Filter     /       /  Detector  /      /        \
+ *              /       '----------------'       '------------'      /         \
+ * FSK input----/                                                    / Decision }----> Binary Out 
+ *              /                                                    /         /
+ *              /       .----------------.       .------------.      /        /
+ *              '------>/ Space Matched  /------>/  Envelope  /----->/       /
+ *                      /     Filter     /       /  Detector  /      /      /
+ *                      '----------------'       '------------'      /_____/
  */
-int demodulate(char inputFile[]) {
-	
-	/*
-	 * 																	  _____	
-	 *																 	 /     \
-	 *						.----------------.		 .------------.		 / 	    \
-	 *				.------>/  Mark Matched  /------>/  Envelope  /----->/       \
-	 *				/		/     Filter     /		 /  Detector  /		 /        \
-	 *			 	/		'----------------'		 '------------'		 /   	   \
-	 *	FSK input---/ 													 / Decision }----> Binary Out 
-	 *				/													 /         /
-	 *				/		.----------------.		 .------------.		 /   	  /
-	 *				'------>/ Space Matched  /------>/  Envelope  /----->/       /
-	 *						/	  Filter	 /		 /  Detector  / 	 /	    /
-	 *						'----------------'		 '------------'		 /_____/				
-	 *																	 
-	 */
-		
+int demodulate(char inputFile[]) {		
 	FILE *inputFilePtr;
 	uint32_t dataSize;
 	int16_t *buffer;
