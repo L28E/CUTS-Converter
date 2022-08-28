@@ -22,4 +22,4 @@ At the start of the recording there is 5 seconds of mark for synchronization, th
 Where the `-p` option is to plot the demodulation results
 
 ## Dependencies
-- gnuplot is necessary to see the debug plot, but the program can be run normally without it
+- gnuplot is necessary to see the aforementioned plot, but the program can be run normally without it
