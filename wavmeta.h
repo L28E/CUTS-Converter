@@ -1,3 +1,6 @@
+#ifndef WAVMETA_H_
+#define WAVMETA_H_
+
 #include <stdint.h>
 #include <string.h>
 /*******************************************************************
@@ -41,3 +44,5 @@ void writeMeta(WavMetadata *meta, int totalSize, int sampleRate,
 	memcpy(meta->subchunk2ID, "data", 4);
 	meta->subchunk2Size = totalSize;
 }
+
+#endif

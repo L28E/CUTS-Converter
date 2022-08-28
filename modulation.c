@@ -1,4 +1,5 @@
 #include "wavmeta.h"
+#include "wavschema.h"
 #include "modulation.h"
 
 /*
@@ -6,7 +7,7 @@
  * --------------------
  * Writes either a mark or space depending on passed parameters.
  *
- * The sine function gives a PAM signal with a range (-1,1)
+ * The sine function gives a (sort of) PAM signal with a range (-1,1)
  * The PAM signal is then quantized, giving a PCM signal.
  * Lets use signed 16 bit PCM. Gives 65536 levels bewteen -32768 and 32767
  */
