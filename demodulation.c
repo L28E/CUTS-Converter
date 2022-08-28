@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #include "demodulation.h"
 #include "wavschema.h"
 
@@ -23,8 +25,9 @@ typedef enum State{STOP, READ, RSTOP} State;
  *                                                          /       
  *                                                          Tb      
  */
-int demodulate(char inputFile[]) {		
+int demodulate(char inputFile[],char outputFile[],bool plot) {		
 	FILE *inputFilePtr;
+	FILE *plotData;
 	uint32_t dataSize;
 	int16_t *buffer;
 	uint8_t k = 0;
@@ -69,10 +72,14 @@ int demodulate(char inputFile[]) {
 	Filter_init(spaceEnv,envelopeImpulse,sizeof(envelopeImpulse)/sizeof(double));	 
 	Filter_init(markEnv,envelopeImpulse,sizeof(envelopeImpulse)/sizeof(double));
 	
-	// Open a temporary file for plotting
-	FILE *plotData = fopen("data.tmp", "w");
+	
+	if (plot){
+		// Open a temporary file for plotting
+		plotData = fopen("plot.tmp", "w");
+	}	
+	
 	// Open a file for the bitstream
-	FILE *bitstream = fopen("out.tmp", "w");
+	FILE *bitstream = fopen(outputFile, "w");
 	
 	// Step through the whole buffer and demodulate it	
 	for (int i = 0; i < dataSize / 2; i++) {
@@ -96,8 +103,8 @@ int demodulate(char inputFile[]) {
 				state = READ; 				// Got a startbit. Move to READ
 			}else if (state == READ){				
 				byte = cell << j | byte; 		// Build the byte
-				j=(j+1)%8; 
-				if (j==0) state = RSTOP; 		// Move to RSTOP after reading 8 bits
+				j=(j+1)%8; 				// Count cells read
+				if (j==0) state = RSTOP; 		// Move to RSTOP after reading 8 cells
 			}else if (state == RSTOP){
 				if (cell == MARK){					
 					fprintf(bitstream,"%c",byte); 	// Got a stop bit. Append the byte
@@ -110,17 +117,20 @@ int demodulate(char inputFile[]) {
 			}
 		}		
 
-		// write to the temp file as we go 
-		fprintf(plotData, "%d %d %f %f %f %f %d\n", i, buffer[i], Filter_get(lpf), Filter_get(hpf), Filter_get(spaceEnv), Filter_get(markEnv), cell);
-
+		if (plot){
+			// Write to the temp file as we go 
+			fprintf(plotData, "%d %d %f %f %f %f %d\n", i, buffer[i], Filter_get(lpf), Filter_get(hpf), Filter_get(spaceEnv), Filter_get(markEnv), cell);
+		}
 	}
 	
 	fclose(bitstream);
 
-	fclose(plotData);
-	FILE *gnuPlotPipe = popen("gnuplot -persistent", "w");
-	fprintf(gnuPlotPipe, "%s\n", "plot 'data.tmp' using 1:2 w l title 'raw', '' using 1:3 w l title 'lowpass', '' using 1:4 w l title 'highpass', '' using 1:5 w l title 'lowenv', '' using 1:6 w l title 'highenv', '' using 1:7 w l title 'bitstream'; pause mouse close");
-	fclose(gnuPlotPipe);
+	if (plot){
+		fclose(plotData);
+		FILE *gnuPlotPipe = popen("gnuplot -persistent", "w");
+		fprintf(gnuPlotPipe, "%s\n", "plot 'plot.tmp' using 1:2 w l title 'raw', '' using 1:3 w l title 'lowpass', '' using 1:4 w l title 'highpass', '' using 1:5 w l title 'lowenv', '' using 1:6 w l title 'highenv', '' using 1:7 w l title 'bitstream'; pause mouse close");
+		fclose(gnuPlotPipe);
+	}
 
 	return 0;
 }

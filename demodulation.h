@@ -303,6 +303,6 @@ static double envelopeImpulse[] = {
   -0.004533946289383208
 };
 
-int demodulate(char inputFile[]); 
+int demodulate(char inputFile[],char outputFile[],bool plot); 
 
 #endif

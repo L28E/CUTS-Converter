@@ -1,7 +1,7 @@
 # CUTS-Converter
 A program to convert arbitrary files to or from CUTS encoding. The intent is to store and retrieve (small) files on an audio cassette.
 
-# Encoding
+## Encoding
 
 |Cell|300 Bd|1200 Bd|2400 Bd (MSX)|2400 Bd (Quick CUTS)|
 |---|---|---|---|---|
@@ -15,3 +15,11 @@ A program to convert arbitrary files to or from CUTS encoding. The intent is to 
     - A word is recorded in little endian order, i.e. little end first
 
 At the start of the recording there is 5 seconds of mark for synchronization, then frames. There can be an arbitrary number of marks between frames. 
+
+## Usage
+`./cuts -m {mod|demod} -i input_file -o output_file [-p]`
+
+Where the `-p` option is to plot the demodulation results
+
+## Dependencies
+- gnuplot is necessary to see the debug plot, but the program can be run normally without it
