@@ -86,7 +86,11 @@ int modulate(char inputFile[],char outputFile[]) {
 		return -1;
 
 	double leadSize = 5 * 2 * sampleRate;
-	double dataSize = inputFilelen * 8 * samplesPerCell * 2;
+	/* 	- Each byte in the input file is encoded with 10 cells
+			- Each cell has 147 samples
+			- Each sample is 2 bytes
+	*/  
+	double dataSize = inputFilelen * 10 * samplesPerCell * 2; 
 
 	// Populate the header and write it to the file.
 	writeMeta(&meta, leadSize + dataSize, sampleRate, numChannels, bitDepth);
