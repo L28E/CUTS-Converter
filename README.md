@@ -1,7 +1,7 @@
 # CUTS-Converter
 A program to convert arbitrary files to or from CUTS encoding. The intent is to store and retrieve (small) files on an audio cassette.
 
-## Encoding
+## About CUTS
 
 |Cell|300 Bd|1200 Bd|2400 Bd (MSX)|2400 Bd (Quick CUTS)|
 |---|---|---|---|---|
@@ -20,6 +20,9 @@ At the start of the recording there is 5 seconds of mark for synchronization, th
 `./cuts -m {mod|demod} -i input_file -o output_file [-p]`
 
 Where the `-p` option is to plot the demodulation results
+
+## Building
+- make and gcc are needed to compile for Linux, MinGW to cross-compile for Windows
 
 ## Dependencies
 - gnuplot is necessary to see the aforementioned plot, but the program can be run normally without it
