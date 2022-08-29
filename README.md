@@ -22,7 +22,8 @@ At the start of the recording there is 5 seconds of mark for synchronization, th
 Where the `-p` option is to plot the demodulation results
 
 ## Building
-- make and gcc are needed to compile for Linux, MinGW to cross-compile for Windows
+- `make` to compile for Linux
+- `make CC=i686-w64-mingw32-gcc` to cross-compile for Windows``
 
 ## Dependencies
 - gnuplot is necessary to see the aforementioned plot, but the program can be run normally without it
