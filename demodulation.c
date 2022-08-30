@@ -32,6 +32,11 @@ int demodulate(char inputFile[],char outputFile[],bool plot) {
 	int16_t *buffer;
 	uint8_t k = 0;
 	uint8_t j = 0;
+	double markEnvOut;
+	double spaceEnvOut;
+	double maxAmpl;
+	double thresholdCoeff = 0.4; // The fraction of the max amplitude to use as the threshold.
+	double threshold; // A cell must have a greater amplitude than this to be detected. Remember that the envelope filters cause some attentuation
 	char byte = 0x00;
 	Cell cell = MARK;
 	State state = STOP;
@@ -44,6 +49,7 @@ int demodulate(char inputFile[],char outputFile[],bool plot) {
 	// Open the wav for reading.
 	inputFilePtr = fopen(inputFile, "rb");
 	if (inputFilePtr == NULL) {
+		printf("Something went wrong opening the input file...\n");
 		return -1;
 	}
 
@@ -72,7 +78,6 @@ int demodulate(char inputFile[],char outputFile[],bool plot) {
 	Filter_init(spaceEnv,envelopeImpulse,sizeof(envelopeImpulse)/sizeof(double));	 
 	Filter_init(markEnv,envelopeImpulse,sizeof(envelopeImpulse)/sizeof(double));
 	
-	
 	if (plot){
 		// Open a temporary file for plotting
 		plotData = fopen("plot.tmp", "w");
@@ -80,6 +85,16 @@ int demodulate(char inputFile[],char outputFile[],bool plot) {
 	
 	// Open a file for the bitstream
 	FILE *bitstream = fopen(outputFile, "w");
+
+	// Find the maximum amplitude in the buffer and use that to set the threshold for detection
+	// TODO: Maybe start searching later in the recording to avoid any pops, clicks, etc.
+	maxAmpl=0;
+	for (int i = 0; i < dataSize / 2; i++) {
+		if(buffer[i]>maxAmpl){
+			maxAmpl=buffer[i];
+		}
+	}
+	threshold = thresholdCoeff * maxAmpl;
 	
 	// Step through the whole buffer and demodulate it	
 	for (int i = 0; i < dataSize / 2; i++) {
@@ -96,7 +111,16 @@ int demodulate(char inputFile[],char outputFile[],bool plot) {
 		k = (k+1)%samplesPerCell; 
 		if (k == 0){			
 			// Compare and decide
-			cell = (Filter_get(markEnv)>Filter_get(spaceEnv)) ? MARK : SPACE; // TODO: should also check that it's above some threshold, in case there's dead air in the recording 
+			markEnvOut = Filter_get(markEnv);
+			spaceEnvOut = Filter_get(spaceEnv);			
+			
+			if (markEnvOut > spaceEnvOut && markEnvOut >= threshold){
+				cell = MARK;
+			}else if(spaceEnvOut > markEnvOut && spaceEnvOut >= threshold){
+				cell = SPACE;
+			} else{
+				continue;
+			}					
 
 			// The FSM to decode the bitstream
 			if (state == STOP && cell == SPACE){
@@ -112,7 +136,7 @@ int demodulate(char inputFile[],char outputFile[],bool plot) {
 					state = STOP; 			// Finished reading the word. Move to STOP
 				}else{
 					printf("Error: Expected a stopbit (mark) but got a space!\n");
-					return -1;
+					state = STOP;
 				}				
 			}
 		}		
