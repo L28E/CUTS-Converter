@@ -1,5 +1,5 @@
 # CUTS-Converter
-A program to convert arbitrary files to or from CUTS encoding. The intent is to store and retrieve (small) files on an audio cassette.
+A program to convert arbitrary files to or from CUTS encoding. The intent is to store and retrieve (small) files on an audio cassette. The program encodes a given file and generates a WAV file which can be recorded to a cassette, or decodes a given WAV file.  
 
 ## About CUTS
 
