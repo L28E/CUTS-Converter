@@ -25,12 +25,12 @@ int main(int argc, char **argv) {
               	switch (opt) {
              	case 'm':
                 	m = true;
-			if (strcmp(optarg,"mod")==0){
+			if (strcmp(optarg,"enc")==0){
 				mode = MODULATE;
-			}else if(strcmp(optarg,"demod")==0){
+			}else if(strcmp(optarg,"dec")==0){
 				mode = DEMODULATE;
 			}else{
-				printf("Invalid mode provided!\nUsage: %s -m {mod|demod} -i input_file -o output_file [-p]\n", argv[0]);
+				printf("Invalid mode provided!\nUsage: %s -m {enc|dec} -i input_file -o output_file [-p]\n", argv[0]);
                    		exit(EXIT_FAILURE);
 			}
                 	break;
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 			p = true;
 			break;   
                	default: /* '?' */
-                	printf("Usage: %s -m {mod|demod} -i input_file -o output_file [-p]\n", argv[0]);
+                	printf("Usage: %s -m {enc|dec} -i input_file -o output_file [-p]\n", argv[0]);
                    	exit(EXIT_FAILURE);
                	}
 	}
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 			return demodulate(inputFile,outputFile,p);
 		}
 	}else{
-		printf("Not enough arguments provided!\nUsage: %s -m {mod|demod} -i input_file -o output_file [-p]\n", argv[0]);
+		printf("Not enough arguments provided!\nUsage: %s -m {enc|dec} -i input_file -o output_file [-p]\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 	

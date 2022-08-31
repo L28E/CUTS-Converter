@@ -17,9 +17,11 @@ A program to convert arbitrary files to or from CUTS encoding. The intent is to 
 At the start of the recording there is 5 seconds of mark for synchronization, then frames. There can be an arbitrary number of marks between frames. 
 
 ## Usage
-`./cuts -m {mod|demod} -i input_file -o output_file [-p]`
+`./cuts -m {enc|dec} -i input_file -o output_file [-p]`
 
-Where the `-p` option is to plot the demodulation results
+- To encode, use `enc` after the `-m` option. To decode, instead use `dec` after the `-m` option
+- To optionally plot the decoding results, use the `-p` option
+- For Windows friends the usage is more or less the same, but first run `cmd`, `cd` into the directory with the executable and then run the program, using `cuts_x86.exe` instead of `cuts`
 
 ## Building
 - `make` to compile for Linux
